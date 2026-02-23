@@ -16,9 +16,9 @@ class Publisher(Node):
         self._timer = self.create_timer(1.0, self._on_timer)
 
         self.get_logger().info(f'Publishing to: {topic_name}')
-        self.get_logger().info(
-            "Use: --ros-args -p text:='text'"
-        )
+
+        # Publish immediately on startup
+        self._on_timer()
 
     def _on_timer(self):
         text = self.get_parameter('text').get_parameter_value().string_value

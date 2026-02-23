@@ -3,12 +3,14 @@
 <package format="3">
   <name>task02</name>
   <version>0.0.0</version>
-  <description>Task 02 - Receiver node</description>
+  <description>Task 02 - Publisher node</description>
   <maintainer email="user@example.com">user</maintainer>
   <license>Apache-2.0</license>
 
   <exec_depend>rclpy</exec_depend>
   <exec_depend>std_msgs</exec_depend>
+  <exec_depend>launch</exec_depend>
+  <exec_depend>launch_ros</exec_depend>
 
   <test_depend>ament_copyright</test_depend>
   <test_depend>ament_flake8</test_depend>
