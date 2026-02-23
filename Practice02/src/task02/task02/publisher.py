@@ -13,28 +13,23 @@ class Publisher(Node):
         topic_name = self.get_parameter('topic_name').get_parameter_value().string_value
         self._publisher = self.create_publisher(String, topic_name, 10)
 
-        self._timer = self.create_timer(1.0, self._on_timer)
+        self._text = self.get_parameter('text').get_parameter_value().string_value
 
-        self.get_logger().info(f'Publishing to: {topic_name}')
-
-        # Publish immediately on startup
-        self._on_timer()
-
-    def _on_timer(self):
-        text = self.get_parameter('text').get_parameter_value().string_value
+        self._pub = self.create_publisher(String, topic_name, 10)
+        self.create_timer(0.1, self._publish)
+        self._publish()
+    def _publish(self):
         msg = String()
-        msg.data = text
-        self._publisher.publish(msg)
+        msg.data = self._text
+        self._pub.publish(msg)
 
 
 def main(args=None):
     rclpy.init(args=args)
     node = Publisher()
-    try:
-        rclpy.spin(node)
-    finally:
-        node.destroy_node()
-        rclpy.shutdown()
+    rclpy.spin(node)
+    node.destroy_node()
+    rclpy.shutdown()
 
 
 if __name__ == '__main__':
