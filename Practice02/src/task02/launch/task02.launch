@@ -1,0 +1,3 @@
+<launch>
+    <node pkg="task02" exec="publisher" name="publisher" output="screen"/>
+</launch>

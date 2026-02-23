@@ -24,6 +24,7 @@
                 wheel
                 pytest
                 flake8
+                rclpy
               ]))
 
               # Colcon build tool
@@ -33,6 +34,7 @@
               cmake
               git
               devcontainer
+
             ];
 
             shellHook = ''
