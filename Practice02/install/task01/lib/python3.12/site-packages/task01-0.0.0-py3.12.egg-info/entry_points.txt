@@ -1,0 +1,2 @@
+[console_scripts]
+receiver = task01.receiver:main
