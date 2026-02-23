@@ -22,6 +22,7 @@ setup(
     entry_points={
         "console_scripts": [
             "worker = task03.worker:main",
+            "publisher = task03.worker:main",
         ],
     },
 )

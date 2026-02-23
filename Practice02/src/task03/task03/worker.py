@@ -1,13 +1,11 @@
 import rclpy
 from rclpy.node import Node
-
-# from std_msgs.msg import String
 from std_srvs.srv import Trigger
 
 
 class Worker(Node):
     def __init__(self):
-        super().__init__("worker")
+        super().__init__("publisher")
 
         # parameters
         self.declare_parameter("service_name", "/trigger_service")
@@ -21,23 +19,28 @@ class Worker(Node):
         )
 
         self._stored_string = default_string
-        spgc_service_name = "/spgc/trigger"
-        client = self.create_client(Trigger, spgc_service_name)
-        if client.wait_for_service(timeout_sec=1.0):
-            req = Trigger.Request()
-            future = client.call_async(req)
-            try:
-                rclpy.spin_until_future_complete(self, future, timeout_sec=1.0)
-            except Exception:
-                future = None
-            if future is not None and future.done() and future.result() is not None:
-                res = future.result()
-                if hasattr(res, "message"):
-                    self._stored_string = res.message
 
         self._service = self.create_service(Trigger, service_name, self._handle_trigger)
 
-        # self._publisher = self.create_publisher(String, "/spgc/receiver", 10)
+        self._client = self.create_client(Trigger, "/spgc/trigger")
+
+        self._timer = self.create_timer(0.1, self._call_spgc_trigger)
+
+    def _call_spgc_trigger(self):
+        try:
+            if self._client.wait_for_service(timeout_sec=1.0):
+                req = Trigger.Request()
+                future = self._client.call_async(req)
+                rclpy.spin_until_future_complete(self, future, timeout_sec=1.0)
+                if future is not None and future.done():
+                    res = future.result()
+                    if res is not None and hasattr(res, "message"):
+                        self._stored_string = res.message
+        finally:
+            try:
+                self._timer.cancel()
+            except Exception:
+                pass
 
     def _handle_trigger(self, request, response):
         response.success = True
